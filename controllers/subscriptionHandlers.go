@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"readit_backend/data"
 	"readit_backend/models"
@@ -100,15 +101,22 @@ func PurchaseSubscription(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(userSubscription)
 }
-
 func ViewUserSubscription(w http.ResponseWriter, r *http.Request) {
-	// Extract user ID from query params
-	userID, _ := getUserFromToken(r)
+	userID, err := getUserFromToken(r)
+	if err != nil {
+		http.Error(w, "Unauthorized: Failed to get user ID", http.StatusUnauthorized)
+		return
+	}
+	log.Println("UserID:", userID)
 
 	// Find user's active subscription
 	var userSubscription models.UserSubscription
-	err := userSubscriptionsCollection.FindOne(context.TODO(), bson.M{"user_id": userID}).Decode(&userSubscription)
+	err = userSubscriptionsCollection.FindOne(
+		context.TODO(),
+		bson.M{"user_id": userID, "expiry_date": bson.M{"$gte": time.Now()}},
+	).Decode(&userSubscription)
 	if err != nil {
+		log.Println("Error retrieving subscription:", err)
 		http.Error(w, "No active subscription found", http.StatusNotFound)
 		return
 	}
@@ -129,6 +137,7 @@ func ViewUserSubscription(w http.ResponseWriter, r *http.Request) {
 		IsExpired:    daysLeft <= 0,
 	}
 
+	log.Printf("Response: %+v\n", response)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
