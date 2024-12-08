@@ -14,7 +14,7 @@ var contactsCollection *mongo.Collection
 
 func init() {
 	client := data.GetMongoClient()
-	contactsCollection = client.Database("ndulaDB").Collection("contacts")
+	contactsCollection = client.Database("readitDB").Collection("contacts")
 }
 
 func SubmitContactHandler(w http.ResponseWriter, r *http.Request) {

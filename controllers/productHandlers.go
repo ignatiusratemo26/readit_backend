@@ -15,7 +15,7 @@ var productsCollection *mongo.Collection
 
 func init() {
 	client := data.GetMongoClient()
-	productsCollection = client.Database("ndulaDB").Collection("products")
+	productsCollection = client.Database("readitDB").Collection("products")
 }
 
 func GetProductsHandler(w http.ResponseWriter, r *http.Request) {

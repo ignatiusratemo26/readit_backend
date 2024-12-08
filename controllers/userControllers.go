@@ -22,7 +22,7 @@ var usersCollection *mongo.Collection
 
 func init() {
 	client := data.GetMongoClient()
-	usersCollection = client.Database("ndulaDB").Collection("users")
+	usersCollection = client.Database("readitDB").Collection("users")
 
 }
 
