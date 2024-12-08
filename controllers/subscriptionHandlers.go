@@ -60,8 +60,8 @@ func GetSubscriptionPlansHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PurchaseSubscription(w http.ResponseWriter, r *http.Request) {
+	UserId, _ := getUserFromToken(r)
 	var request struct {
-		UserID         string `json:"user_id"`
 		SubscriptionID string `json:"subscription_id"`
 	}
 
@@ -85,7 +85,7 @@ func PurchaseSubscription(w http.ResponseWriter, r *http.Request) {
 
 	userSubscription := models.UserSubscription{
 		ID:             primitive.NewObjectID().Hex(),
-		UserID:         request.UserID,
+		UserID:         UserId.Hex(),
 		SubscriptionID: request.SubscriptionID,
 		StartDate:      startDate,
 		ExpiryDate:     expiryDate,
@@ -103,11 +103,7 @@ func PurchaseSubscription(w http.ResponseWriter, r *http.Request) {
 
 func ViewUserSubscription(w http.ResponseWriter, r *http.Request) {
 	// Extract user ID from query params
-	userID := r.URL.Query().Get("user_id")
-	if userID == "" {
-		http.Error(w, "User ID is required", http.StatusBadRequest)
-		return
-	}
+	userID, _ := getUserFromToken(r)
 
 	// Find user's active subscription
 	var userSubscription models.UserSubscription
