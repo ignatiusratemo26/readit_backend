@@ -25,6 +25,7 @@ func RegisterRoutes() *mux.Router {
 	r.HandleFunc("/api/products", controllers.GetProductsHandler).Methods("GET")
 	r.HandleFunc("/api/subscriptions/purchase", controllers.PurchaseSubscription).Methods("POST")
 	r.HandleFunc("/api/subscriptions/view", controllers.ViewUserSubscription).Methods("GET")
+	r.HandleFunc("/api/contact", controllers.SubmitContactHandler).Methods("POST")
 	// r.HandleFunc("/api/products/popular", controllers.GetPopularProductsHandler).Methods("GET")
 
 	// Contact routes
